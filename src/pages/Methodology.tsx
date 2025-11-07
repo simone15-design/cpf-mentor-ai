@@ -274,50 +274,6 @@ const Methodology = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Technology Stack */}
-          <Card>
-            <CardHeader>
-              <CardTitle>What Powers Our Chatbot</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <h4 className="font-semibold mb-3">What You See</h4>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Modern web interface</li>
-                    <li>• Beautiful, responsive design</li>
-                    <li>• Fast and smooth experience</li>
-                    <li>• Easy navigation</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Behind the Scenes</h4>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Secure database storage</li>
-                    <li>• Fast search capabilities</li>
-                    <li>• User authentication</li>
-                    <li>• Data protection</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">AI Technology</h4>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Smart document understanding</li>
-                    <li>• Natural language processing</li>
-                    <li>• Context-aware responses</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">External Services</h4>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Automated website monitoring</li>
-                    <li>• Reliable hosting</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
