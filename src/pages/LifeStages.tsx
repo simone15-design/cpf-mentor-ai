@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Home, Heart, Baby, Users } from "lucide-react";
+import { GraduationCap, Briefcase, Home, Heart, Baby, Users, TrendingUp } from "lucide-react";
 
 const lifeStages = [
   {
@@ -17,6 +17,13 @@ const lifeStages = [
     description: "Building your career? Understand CPF for career growth.",
     icon: Briefcase,
     color: "from-blue-500 to-blue-600",
+  },
+  {
+    id: "self-employed",
+    title: "Self-Employed",
+    description: "Running your own business? Learn about voluntary CPF contributions and MediSave.",
+    icon: TrendingUp,
+    color: "from-emerald-500 to-emerald-600",
   },
   {
     id: "homebuyer",
