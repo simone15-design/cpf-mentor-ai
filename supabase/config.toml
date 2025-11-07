@@ -2,3 +2,6 @@ project_id = "atyqllthwfnczwimtdwa"
 
 [functions.process-document]
 verify_jwt = true
+
+[functions.summarize-conversation]
+verify_jwt = false
