@@ -21,29 +21,28 @@ const Methodology = () => {
         <div className="max-w-5xl mx-auto space-y-12">
           {/* Header */}
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight">Methodology</h1>
+            <h1 className="text-4xl font-bold tracking-tight">How We Work</h1>
             <p className="text-xl text-muted-foreground">
-              Understanding the Technical Implementation and Data Flows
+              A simple look at how our chatbot helps you understand CPF
             </p>
           </div>
 
           {/* Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>System Architecture Overview</CardTitle>
+              <CardTitle>How Our Chatbot Works</CardTitle>
               <CardDescription>
-                Our CPF Guide Chatbot leverages a Retrieval-Augmented Generation (RAG) architecture
-                combined with modern cloud infrastructure to provide accurate, context-aware responses.
+                Think of our chatbot as a smart assistant that reads official CPF documents and explains them to you in simple English.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>
-                The system is built on three core pillars:
+                Our system works in three simple steps:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                <li><strong>Data Ingestion Layer:</strong> Processes and stores CPF documents from multiple sources</li>
-                <li><strong>Vector Search Engine:</strong> Enables semantic similarity matching for relevant information retrieval</li>
-                <li><strong>Conversational AI Layer:</strong> Generates natural language responses using retrieved context</li>
+                <li><strong>Step 1 - Collecting Information:</strong> We gather and store official CPF documents and guidelines</li>
+                <li><strong>Step 2 - Finding Answers:</strong> When you ask a question, we search through our documents to find the most relevant information</li>
+                <li><strong>Step 3 - Explaining to You:</strong> Our AI reads the official information and explains it to you in plain English</li>
               </ul>
             </CardContent>
           </Card>
@@ -53,15 +52,15 @@ const Methodology = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
-                Use Case 1: Conversational Chat with RAG
+                When You Ask a Question
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-3">Process Flow</h3>
+                <h3 className="text-lg font-semibold mb-3">What Happens Behind the Scenes</h3>
                 <p className="text-muted-foreground mb-4">
-                  When a user asks a question, the system retrieves relevant information from the knowledge base
-                  and generates contextual responses using AI.
+                  When you ask us about CPF, we quickly search our library of official documents, 
+                  find the best answers, and explain them to you in a way that makes sense.
                 </p>
               </div>
 
@@ -86,13 +85,13 @@ const Methodology = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-semibold">Technical Details:</h4>
+                <h4 className="font-semibold">Here's How:</h4>
                 <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                  <li><strong>Query Embedding:</strong> User's question is converted to a 768-dimensional vector using OpenAI's text-embedding-3-small model</li>
-                  <li><strong>Similarity Search:</strong> Vector database (pgvector) finds the 5 most similar document chunks using cosine similarity (threshold: 0.5)</li>
-                  <li><strong>Context Assembly:</strong> Retrieved chunks are formatted with document titles and combined into a context string</li>
-                  <li><strong>AI Generation:</strong> Gemini 2.5 Flash model generates responses using the system prompt, conversation history, and retrieved context</li>
-                  <li><strong>Streaming Response:</strong> AI response is streamed back to the user in real-time with source citations</li>
+                  <li><strong>We understand your question:</strong> Your question is analyzed to understand what you're really asking about</li>
+                  <li><strong>We search our documents:</strong> We look through our collection to find the 5 most relevant pieces of information</li>
+                  <li><strong>We prepare the answer:</strong> The relevant information is gathered together with your conversation history</li>
+                  <li><strong>AI explains it to you:</strong> Our AI reads the official information and translates it into simple, friendly language</li>
+                  <li><strong>You see the answer:</strong> The response appears on your screen word by word, just like texting, along with links to the original sources</li>
                 </ol>
               </div>
             </CardContent>
@@ -103,14 +102,15 @@ const Methodology = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Use Case 2: Document Processing & Embedding Generation
+                How We Prepare Our Knowledge Base
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-3">Process Flow</h3>
+                <h3 className="text-lg font-semibold mb-3">Building Our Library</h3>
                 <p className="text-muted-foreground mb-4">
-                  Documents are processed, chunked, and converted into vector embeddings for efficient retrieval.
+                  Before we can answer your questions, we need to organize all the CPF documents 
+                  in a way that lets us search through them quickly and accurately.
                 </p>
               </div>
 
@@ -135,13 +135,13 @@ const Methodology = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-semibold">Technical Details:</h4>
+                <h4 className="font-semibold">The Process:</h4>
                 <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                  <li><strong>Document Storage:</strong> Raw document content stored in cpf_documents table with metadata (title, URL, source_type)</li>
-                  <li><strong>Text Chunking:</strong> Content split into overlapping chunks (1000 characters, 200 character overlap) to preserve context</li>
-                  <li><strong>Embedding Generation:</strong> Each chunk converted to vector using OpenAI text-embedding-3-small (768 dimensions)</li>
-                  <li><strong>Vector Storage:</strong> Embeddings stored in document_chunks table with pgvector extension for efficient similarity search</li>
-                  <li><strong>Indexing:</strong> Database maintains vector index for fast retrieval using HNSW or IVFFlat algorithms</li>
+                  <li><strong>Save the document:</strong> When a document is uploaded, we save it along with its title and where it came from</li>
+                  <li><strong>Break it into smaller pieces:</strong> We split long documents into smaller, manageable sections that overlap slightly so we don't lose context</li>
+                  <li><strong>Make it searchable:</strong> Each section is converted into a special format that computers can compare and search through</li>
+                  <li><strong>Store it in our library:</strong> All these searchable sections are saved in our database</li>
+                  <li><strong>Create an index:</strong> We organize everything so we can find the right information super quickly when you ask a question</li>
                 </ol>
               </div>
             </CardContent>
@@ -152,14 +152,15 @@ const Methodology = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
-                Use Case 3: Automated Website Crawling
+                Keeping Our Information Up-to-Date
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-3">Process Flow</h3>
+                <h3 className="text-lg font-semibold mb-3">Staying Current</h3>
                 <p className="text-muted-foreground mb-4">
-                  Official CPF websites are crawled to automatically import the latest policy documents.
+                  CPF policies change, so we automatically check official CPF websites 
+                  to make sure we always have the latest information for you.
                 </p>
               </div>
 
@@ -190,13 +191,13 @@ const Methodology = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-semibold">Technical Details:</h4>
+                <h4 className="font-semibold">How It Works:</h4>
                 <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                  <li><strong>Authentication:</strong> Admin role verification via Supabase JWT and user_roles table</li>
-                  <li><strong>Firecrawl Integration:</strong> Third-party service handles web scraping with rate limiting and robots.txt compliance</li>
-                  <li><strong>Async Polling:</strong> System polls crawl status every 2 seconds with 5-minute timeout</li>
-                  <li><strong>Content Extraction:</strong> Markdown content extracted with metadata (title, URL, source_type='web_crawl')</li>
-                  <li><strong>Batch Processing:</strong> All pages stored in database, then batch embedding generation triggered</li>
+                  <li><strong>Admin starts the update:</strong> Only authorized administrators can trigger a website scan</li>
+                  <li><strong>We visit the website:</strong> Our system visits the official CPF website and reads all the pages</li>
+                  <li><strong>We wait for completion:</strong> We check every few seconds to see if all the pages have been collected</li>
+                  <li><strong>We save the content:</strong> Each page's title, content, and web address is saved to our system</li>
+                  <li><strong>We process it:</strong> All the new information goes through our preparation process so you can search through it</li>
                 </ol>
               </div>
             </CardContent>
@@ -207,12 +208,12 @@ const Methodology = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Database className="h-5 w-5" />
-                Data Flow Architecture
+                The Complete Picture
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-3">End-to-End Data Flow</h3>
+                <h3 className="text-lg font-semibold mb-3">From Document to Answer</h3>
               </div>
 
               <div className="bg-muted/50 p-4 rounded-lg overflow-x-auto">
@@ -240,28 +241,28 @@ const Methodology = () => {
               </div>
 
               <div className="space-y-4">
-                <h4 className="font-semibold">Database Schema:</h4>
+                <h4 className="font-semibold">How We Store Information:</h4>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="border rounded-lg p-4">
-                    <h5 className="font-semibold mb-2">cpf_documents</h5>
+                    <h5 className="font-semibold mb-2">Original Documents</h5>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• id (uuid)</li>
-                      <li>• title (text)</li>
-                      <li>• content (text)</li>
-                      <li>• url (text)</li>
-                      <li>• source_type (text)</li>
-                      <li>• created_at (timestamp)</li>
+                      <li>• Document ID</li>
+                      <li>• Title</li>
+                      <li>• Full content</li>
+                      <li>• Web address</li>
+                      <li>• Where it came from</li>
+                      <li>• When it was added</li>
                     </ul>
                   </div>
                   <div className="border rounded-lg p-4">
-                    <h5 className="font-semibold mb-2">document_chunks</h5>
+                    <h5 className="font-semibold mb-2">Searchable Pieces</h5>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• id (uuid)</li>
-                      <li>• document_id (uuid)</li>
-                      <li>• chunk_text (text)</li>
-                      <li>• chunk_index (integer)</li>
-                      <li>• embedding (vector[768])</li>
-                      <li>• created_at (timestamp)</li>
+                      <li>• Piece ID</li>
+                      <li>• Which document it's from</li>
+                      <li>• The text content</li>
+                      <li>• Position in document</li>
+                      <li>• Searchable format</li>
+                      <li>• When it was created</li>
                     </ul>
                   </div>
                 </div>
@@ -272,41 +273,41 @@ const Methodology = () => {
           {/* Technology Stack */}
           <Card>
             <CardHeader>
-              <CardTitle>Technology Stack</CardTitle>
+              <CardTitle>What Powers Our Chatbot</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h4 className="font-semibold mb-3">Frontend</h4>
+                  <h4 className="font-semibold mb-3">What You See</h4>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• React 18 with TypeScript</li>
-                    <li>• Tailwind CSS for styling</li>
-                    <li>• React Query for state management</li>
-                    <li>• React Router for navigation</li>
+                    <li>• Modern web interface</li>
+                    <li>• Beautiful, responsive design</li>
+                    <li>• Fast and smooth experience</li>
+                    <li>• Easy navigation</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-3">Backend</h4>
+                  <h4 className="font-semibold mb-3">Behind the Scenes</h4>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Supabase (PostgreSQL + Auth)</li>
-                    <li>• Edge Functions (Deno runtime)</li>
-                    <li>• pgvector extension for vector search</li>
-                    <li>• Row Level Security (RLS) policies</li>
+                    <li>• Secure database storage</li>
+                    <li>• Fast search capabilities</li>
+                    <li>• User authentication</li>
+                    <li>• Data protection</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-3">AI/ML Services</h4>
+                  <h4 className="font-semibold mb-3">AI Technology</h4>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• OpenAI text-embedding-3-small</li>
-                    <li>• Google Gemini 2.5 Flash</li>
-                    <li>• Lovable AI Gateway</li>
+                    <li>• Smart document understanding</li>
+                    <li>• Natural language processing</li>
+                    <li>• Context-aware responses</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-3">Third-Party Services</h4>
+                  <h4 className="font-semibold mb-3">External Services</h4>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Firecrawl for web scraping</li>
-                    <li>• Vercel for deployment</li>
+                    <li>• Automated website monitoring</li>
+                    <li>• Reliable hosting</li>
                   </ul>
                 </div>
               </div>
