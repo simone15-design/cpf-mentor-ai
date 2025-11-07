@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Home, Heart, Baby, Users, TrendingUp } from "lucide-react";
+import { GraduationCap, Briefcase, Home, Heart, Baby, Users, TrendingUp, Clock } from "lucide-react";
 
 const lifeStages = [
   {
@@ -52,6 +52,13 @@ const lifeStages = [
     description: "Looking ahead? Plan for retirement and healthcare needs.",
     icon: Users,
     color: "from-indigo-500 to-indigo-600",
+  },
+  {
+    id: "retirement",
+    title: "Retirement",
+    description: "Enjoying your golden years? Learn about CPF withdrawals and retirement planning.",
+    icon: Clock,
+    color: "from-violet-500 to-violet-600",
   },
 ];
 
