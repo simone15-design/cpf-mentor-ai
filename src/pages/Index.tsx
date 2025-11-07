@@ -61,7 +61,7 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section className="bg-gradient-to-b from-background to-secondary/20 py-20">
+      <section className="bg-gradient-to-b from-background to-secondary/20 pt-12 pb-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-bold text-foreground">How It Works</h2>
