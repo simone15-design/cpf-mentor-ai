@@ -9,6 +9,7 @@ import Chat from "./pages/Chat";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import UserManagement from "./pages/UserManagement";
+import Methodology from "./pages/Methodology";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/methodology" element={<Methodology />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

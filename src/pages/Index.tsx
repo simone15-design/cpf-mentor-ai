@@ -284,13 +284,21 @@ const Index = () => {
             </Card>
 
             {/* Call to Action */}
-            <div className="text-center">
+            <div className="text-center space-y-4">
               <Link to="/stages">
                 <Button size="lg" className="gap-2">
                   <MessageSquare className="h-5 w-5" />
                   Start Your CPF Journey Today
                 </Button>
               </Link>
+              <div>
+                <Link to="/methodology">
+                  <Button variant="outline" className="gap-2">
+                    <BookOpen className="h-4 w-4" />
+                    Learn About Our Methodology
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
