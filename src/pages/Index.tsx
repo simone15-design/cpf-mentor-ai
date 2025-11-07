@@ -36,56 +36,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground">Why Use Our CPF Assistant?</h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
-              We've built the simplest way to navigate Singapore's CPF system
-            </p>
-          </div>
-
-          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
-            <Card className="border-primary/20 transition-shadow hover:shadow-lg">
-              <CardHeader>
-                <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3">
-                  <Target className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Life-Stage Focused</CardTitle>
-                <CardDescription>
-                  Get answers tailored to your current life situation - from first job to first home
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-accent/20 transition-shadow hover:shadow-lg">
-              <CardHeader>
-                <div className="mb-4 inline-flex rounded-xl bg-accent/10 p-3">
-                  <BookOpen className="h-6 w-6 text-accent" />
-                </div>
-                <CardTitle>Plain English</CardTitle>
-                <CardDescription>
-                  Complex policies translated into simple, easy-to-understand language
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-primary/20 transition-shadow hover:shadow-lg">
-              <CardHeader>
-                <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3">
-                  <Clock className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Instant Answers</CardTitle>
-                <CardDescription>
-                  No more searching through multiple PDFs - get accurate answers in seconds
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* How It Works */}
       <section className="bg-gradient-to-b from-background to-secondary/20 py-20">
         <div className="container mx-auto px-4">
