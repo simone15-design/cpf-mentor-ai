@@ -46,6 +46,9 @@ const Index = () => {
                     <p className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
                       Furthermore, please be aware that the LLM may generate inaccurate or incorrect information. You assume full responsibility for how you use any generated output.
                     </p>
+                    <p className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
+                      The data and information provided are current as of November 2025.
+                    </p>
                     <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
                       Always consult with qualified professionals for accurate and personalized advice.
                     </p>
