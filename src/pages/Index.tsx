@@ -85,28 +85,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
-            <CardContent className="py-12 text-center">
-              <h2 className="mb-4 text-3xl font-bold text-foreground">
-                Ready to Master Your CPF?
-              </h2>
-              <p className="mb-8 text-lg text-muted-foreground">
-                Start getting clear answers to your CPF questions today
-              </p>
-              <Link to="/stages">
-                <Button size="lg" className="gap-2 text-lg">
-                  <MessageSquare className="h-5 w-5" />
-                  Get Started Now
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
     </div>
   );
 };
