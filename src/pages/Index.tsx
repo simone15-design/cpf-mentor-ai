@@ -22,7 +22,7 @@ const Index = () => {
               </span>
             </h1>
             <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
-              Get personalized, plain-English answers to your CPF questions. Whether you're just starting work or planning your first home, we're here to help.
+              Get instant, personalized guidance on CPF schemes tailored to your life stage. From your first job to retirement, make informed decisions with AI-powered clarity.
             </p>
             <div className="flex justify-center">
               <Link to="/stages">
