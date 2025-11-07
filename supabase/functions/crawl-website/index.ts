@@ -1,0 +1,198 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
+
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+    
+    if (userError || !user) {
+      console.error('Auth error:', userError);
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { data: roleData } = await supabaseClient
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    if (!roleData) {
+      return new Response(JSON.stringify({ error: 'Admin access required' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { url } = await req.json();
+    if (!url) {
+      return new Response(JSON.stringify({ error: 'URL is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
+    if (!firecrawlApiKey) {
+      return new Response(JSON.stringify({ error: 'Firecrawl API key not configured' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('Starting crawl for:', url);
+
+    // Call Firecrawl API to crawl the website
+    const crawlResponse = await fetch('https://api.firecrawl.dev/v1/crawl', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${firecrawlApiKey}`,
+      },
+      body: JSON.stringify({
+        url: url,
+        limit: 100,
+        scrapeOptions: {
+          formats: ['markdown', 'html'],
+        }
+      }),
+    });
+
+    if (!crawlResponse.ok) {
+      const errorText = await crawlResponse.text();
+      console.error('Firecrawl API error:', errorText);
+      return new Response(JSON.stringify({ error: 'Failed to start crawl' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const crawlData = await crawlResponse.json();
+    console.log('Crawl initiated:', crawlData);
+
+    if (!crawlData.id) {
+      return new Response(JSON.stringify({ error: 'No crawl ID returned' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Poll for crawl completion
+    let crawlStatus = 'scraping';
+    let attempts = 0;
+    const maxAttempts = 60; // 5 minutes max
+    let finalData: any = null;
+
+    while (crawlStatus === 'scraping' && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
+      
+      const statusResponse = await fetch(`https://api.firecrawl.dev/v1/crawl/${crawlData.id}`, {
+        headers: {
+          'Authorization': `Bearer ${firecrawlApiKey}`,
+        },
+      });
+
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json();
+        crawlStatus = statusData.status;
+        finalData = statusData;
+        console.log('Crawl status:', crawlStatus, 'Completed:', statusData.completed, 'Total:', statusData.total);
+      }
+      
+      attempts++;
+    }
+
+    if (crawlStatus !== 'completed') {
+      return new Response(JSON.stringify({ 
+        error: 'Crawl timeout or failed', 
+        status: crawlStatus,
+        crawlId: crawlData.id 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Process and save the crawled pages
+    const pages = finalData.data || [];
+    const savedDocuments = [];
+
+    for (const page of pages) {
+      const content = page.markdown || page.html || '';
+      const pageTitle = page.metadata?.title || page.url || 'Untitled Page';
+      
+      const { data: docData, error: dbError } = await supabaseClient
+        .from('cpf_documents')
+        .insert({
+          title: pageTitle,
+          content: content.substring(0, 50000), // Limit content size
+          url: page.url,
+          uploaded_by: user.id,
+          metadata: {
+            crawlId: crawlData.id,
+            sourceUrl: url,
+            crawledAt: new Date().toISOString(),
+            pageMetadata: page.metadata || {},
+          },
+        })
+        .select()
+        .single();
+
+      if (dbError) {
+        console.error('Error saving document:', dbError);
+      } else {
+        savedDocuments.push(docData);
+      }
+    }
+
+    return new Response(JSON.stringify({ 
+      success: true, 
+      documentsCreated: savedDocuments.length,
+      totalPages: pages.length,
+      crawlId: crawlData.id,
+      documents: savedDocuments
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.error('Crawl error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});

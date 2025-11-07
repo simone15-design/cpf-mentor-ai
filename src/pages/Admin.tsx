@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, FileText, Trash2, Link as LinkIcon, Loader2, LogOut, Users } from "lucide-react";
+import { Upload, FileText, Trash2, Link as LinkIcon, Loader2, LogOut, Users, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,6 +26,8 @@ const Admin = () => {
   const [docUrl, setDocUrl] = useState("");
   const [docTitle, setDocTitle] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [crawlUrl, setCrawlUrl] = useState("");
+  const [isCrawling, setIsCrawling] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -206,6 +208,49 @@ const Admin = () => {
     }
   };
 
+  const handleCrawlWebsite = async () => {
+    if (!crawlUrl) {
+      toast({
+        title: "Missing URL",
+        description: "Please enter a website URL to crawl",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCrawling(true);
+    try {
+      toast({
+        title: "Crawling Started",
+        description: "This may take a few minutes. Please wait...",
+      });
+
+      const { data, error } = await supabase.functions.invoke('crawl-website', {
+        body: { url: crawlUrl },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Crawl Complete",
+        description: `Successfully crawled and saved ${data.documentsCreated} pages from the website.`,
+      });
+
+      setCrawlUrl("");
+      await fetchDocuments();
+    } catch (error) {
+      console.error('Crawl error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to crawl website';
+      toast({
+        title: "Crawl Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsCrawling(false);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
@@ -302,6 +347,45 @@ const Admin = () => {
                   <>
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Document
+                  </>
+                )}
+              </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or crawl website</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="crawl-url">Website URL</Label>
+                <Input
+                  id="crawl-url"
+                  type="url"
+                  placeholder="https://www.cpf.gov.sg/member"
+                  value={crawlUrl}
+                  onChange={(e) => setCrawlUrl(e.target.value)}
+                />
+              </div>
+
+              <Button 
+                onClick={handleCrawlWebsite} 
+                variant="secondary"
+                className="w-full"
+                disabled={isCrawling || !crawlUrl}
+              >
+                {isCrawling ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Crawling Website...
+                  </>
+                ) : (
+                  <>
+                    <Globe className="mr-2 h-4 w-4" />
+                    Crawl Website
                   </>
                 )}
               </Button>
