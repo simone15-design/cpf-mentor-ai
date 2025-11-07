@@ -279,20 +279,6 @@ const Index = () => {
 
                   <div className="space-y-2">
                     <div className="flex items-start gap-3">
-                      <div className="mt-1 rounded-full bg-primary/10 p-2">
-                        <Clock className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-foreground">24/7 Availability</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Get instant answers anytime, anywhere, without waiting for office hours or appointment slots
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-3">
                       <div className="mt-1 rounded-full bg-accent/10 p-2">
                         <Database className="h-4 w-4 text-accent" />
                       </div>
