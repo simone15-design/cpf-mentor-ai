@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, BookOpen, Sparkles, Clock, Target, Database, Users, Zap, Shield } from "lucide-react";
+import { MessageSquare, BookOpen, Sparkles, Clock, Target, Database, Users, Zap, Shield, AlertTriangle } from "lucide-react";
 
 const Index = () => {
   return (
@@ -32,6 +32,28 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+            
+            {/* Disclaimer */}
+            <div className="mt-8 mx-auto max-w-3xl">
+              <div className="rounded-lg border-2 border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20 p-6">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-amber-900 dark:text-amber-100">IMPORTANT NOTICE</h3>
+                    <p className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
+                      This web application is developed as a proof-of-concept prototype. The information provided here is NOT intended for actual usage and should not be relied upon for making any decisions, especially those related to financial, legal, or healthcare matters.
+                    </p>
+                    <p className="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
+                      Furthermore, please be aware that the LLM may generate inaccurate or incorrect information. You assume full responsibility for how you use any generated output.
+                    </p>
+                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                      Always consult with qualified professionals for accurate and personalized advice.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-4 text-center">
               <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary">
                 Admin Portal
