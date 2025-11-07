@@ -32,6 +32,11 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+            <div className="mt-4 text-center">
+              <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary">
+                Admin Portal
+              </Link>
+            </div>
           </div>
         </div>
       </section>

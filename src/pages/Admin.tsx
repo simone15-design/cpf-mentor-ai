@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, FileText, Trash2, Link as LinkIcon, Loader2 } from "lucide-react";
+import { Upload, FileText, Trash2, Link as LinkIcon, Loader2, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -17,16 +18,53 @@ interface Document {
 
 const Admin = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [docUrl, setDocUrl] = useState("");
   const [docTitle, setDocTitle] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    fetchDocuments();
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+
+      // Check if user has admin role
+      const { data: roles, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .eq('role', 'admin')
+        .single();
+
+      if (error || !roles) {
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin privileges. Please contact an administrator.",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
+
+      setIsAdmin(true);
+      fetchDocuments();
+    } catch (error) {
+      console.error('Auth check error:', error);
+      navigate("/auth");
+    }
+  };
 
   const fetchDocuments = async () => {
     setIsLoading(true);
@@ -168,14 +206,37 @@ const Admin = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Logged out",
+      description: "You've been successfully logged out.",
+    });
+    navigate("/auth");
+  };
+
+  if (!isAdmin) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <div className="container mx-auto px-4 py-12">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">Admin Portal</h1>
-          <p className="text-muted-foreground">
-            Manage CPF documents and guides for the knowledge base
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="mb-2 text-3xl font-bold text-foreground">Admin Portal</h1>
+            <p className="text-muted-foreground">
+              Manage CPF documents and guides for the knowledge base
+            </p>
+          </div>
+          <Button variant="outline" onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">

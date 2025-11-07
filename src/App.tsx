@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import LifeStages from "./pages/LifeStages";
 import Chat from "./pages/Chat";
 import Admin from "./pages/Admin";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/stages" element={<LifeStages />} />
           <Route path="/chat/:stageId" element={<Chat />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
