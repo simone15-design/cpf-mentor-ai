@@ -141,26 +141,46 @@ serve(async (req) => {
 
     console.log('Starting crawl for:', url);
 
-    // Call Firecrawl API to crawl the website
-    const crawlResponse = await fetch('https://api.firecrawl.dev/v1/crawl', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${firecrawlApiKey}`,
-      },
-      body: JSON.stringify({
-        url: url,
-        limit: 100,
-        scrapeOptions: {
-          formats: ['markdown', 'html'],
-        }
-      }),
-    });
+    // Call Firecrawl API to crawl the website with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+    let crawlResponse;
+    try {
+      crawlResponse = await fetch('https://api.firecrawl.dev/v1/crawl', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${firecrawlApiKey}`,
+        },
+        body: JSON.stringify({
+          url: url,
+          limit: 100,
+          scrapeOptions: {
+            formats: ['markdown', 'html'],
+          }
+        }),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      clearTimeout(timeoutId);
+      console.error('Firecrawl API connection error:', error);
+      return new Response(JSON.stringify({ 
+        error: 'Failed to connect to Firecrawl API. The service may be temporarily unavailable. Please try again later.' 
+      }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!crawlResponse.ok) {
       const errorText = await crawlResponse.text();
-      console.error('Firecrawl API error:', errorText);
-      return new Response(JSON.stringify({ error: 'Failed to start crawl' }), {
+      console.error('Firecrawl API error:', crawlResponse.status, errorText);
+      return new Response(JSON.stringify({ 
+        error: `Firecrawl API error (${crawlResponse.status}): ${errorText || 'Failed to start crawl'}` 
+      }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
