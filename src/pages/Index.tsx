@@ -22,7 +22,7 @@ const Index = () => {
               </span>
             </h1>
             <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
-              Get personalized information on CPF, tailored to your life stage. From cradle to grave. From first job to retirement.
+              Get personalized information on CPF, tailored to your life stage. From first job to retirement.
             </p>
             <div className="flex justify-center">
               <Link to="/stages">
