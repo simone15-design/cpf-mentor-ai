@@ -114,7 +114,7 @@ const Index = () => {
       <section className="bg-gradient-to-b from-secondary/20 to-background py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground">About This Project</h2>
+            <h2 className="mb-4 text-3xl font-bold text-foreground">About Us</h2>
             <p className="mx-auto max-w-2xl text-muted-foreground">
               Empowering Singaporeans with clear, accessible CPF information through AI technology
             </p>
