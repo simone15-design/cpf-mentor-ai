@@ -104,6 +104,30 @@ const Admin = () => {
 
       // Refresh documents
       await fetchDocuments();
+
+      // Generate embeddings in background
+      toast({
+        title: "Processing Document",
+        description: "Generating embeddings for search...",
+      });
+
+      const { error: embeddingError } = await supabase.functions.invoke('generate-embeddings', {
+        body: { documentId: data.document.id },
+      });
+
+      if (embeddingError) {
+        console.error('Embedding generation error:', embeddingError);
+        toast({
+          title: "Warning",
+          description: "Document uploaded but embeddings failed. Please regenerate.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Document Ready",
+          description: "Document indexed and ready for search!",
+        });
+      }
     } catch (error) {
       console.error('Upload error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload document';

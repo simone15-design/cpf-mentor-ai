@@ -49,15 +49,85 @@ const Chat = () => {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI response - this will be replaced with actual RAG implementation
-    setTimeout(() => {
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: "I understand your question about CPF. Let me explain... (This is a demo response. Connect Lovable AI to enable real CPF assistance.)",
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rag-chat`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [...messages, userMessage],
+            stageId: stageId,
+          }),
+        }
+      );
+
+      if (!response.ok || !response.body) {
+        throw new Error('Failed to get response');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantMessage = '';
+      let textBuffer = '';
+
+      // Add initial assistant message
+      setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (line.startsWith(':') || line.trim() === '') continue;
+          if (!line.startsWith('data: ')) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantMessage += content;
+              setMessages((prev) => {
+                const newMessages = [...prev];
+                const lastIndex = newMessages.length - 1;
+                if (newMessages[lastIndex]?.role === 'assistant') {
+                  newMessages[lastIndex] = {
+                    ...newMessages[lastIndex],
+                    content: assistantMessage,
+                  };
+                }
+                return newMessages;
+              });
+            }
+          } catch (e) {
+            // Incomplete JSON, continue
+          }
+        }
+      }
+
       setIsLoading(false);
-    }, 1000);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get response. Please try again.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
   };
 
   const handleExportFull = () => {
