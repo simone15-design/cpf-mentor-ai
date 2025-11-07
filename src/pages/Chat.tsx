@@ -37,10 +37,12 @@ const Chat = () => {
   const stageTitles: Record<string, string> = {
     "fresh-graduate": "Fresh Graduate",
     "early-career": "Early Career",
-    "homebuyer": "First-Time Homebuyer",
     "married": "Getting Married",
+    "homebuyer": "First-Time Homebuyer",
     "parent": "New Parent",
     "mid-career": "Mid-Career",
+    "pre-retirement": "Pre-Retirement",
+    "retirement": "Retirement",
   };
 
   const handleSend = async () => {

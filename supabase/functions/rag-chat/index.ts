@@ -91,19 +91,85 @@ serve(async (req) => {
       })));
     }
 
+    // Define stage-specific contexts
+    const stageContexts: Record<string, string> = {
+      'fresh-graduate': `The user is a fresh graduate who has just started working. Focus on:
+- Basic CPF account types (Ordinary, Special, MediSave)
+- Understanding monthly CPF contributions and employer contributions
+- Starting to build savings for the future
+- CPF contribution rates for young workers
+- Basic retirement planning concepts`,
+      
+      'early-career': `The user is in their early career, building their professional life. Focus on:
+- Optimizing CPF contributions for career growth
+- Understanding CPF investment schemes (CPFIS)
+- Balancing savings with career development
+- Voluntary contributions and their benefits
+- Planning for major life milestones ahead`,
+      
+      'married': `The user is getting married or recently married. Focus on:
+- Joint CPF planning strategies for couples
+- CPF housing schemes for married couples
+- Combining CPF savings for home purchase
+- Healthcare planning as a couple
+- Family protection schemes and CPF Life nominations`,
+      
+      'homebuyer': `The user is planning to buy their first home. Focus on:
+- CPF housing schemes and eligibility
+- Using CPF Ordinary Account for down payment and mortgage
+- CPF withdrawal limits for property purchase
+- Accrued interest and refund requirements
+- Housing grants and subsidies available`,
+      
+      'parent': `The user is a new parent or planning to start a family. Focus on:
+- MediSave for maternity and pediatric care
+- Education planning and CPF options
+- Adjusting finances with children
+- Healthcare coverage for family members
+- Balancing family needs with retirement savings`,
+      
+      'mid-career': `The user is established in their career and building wealth. Focus on:
+- Maximizing CPF contributions and investments
+- CPF top-ups and tax benefits
+- Retirement sum schemes and targets
+- Healthcare planning (MediShield Life, Integrated Shield Plans)
+- Wealth accumulation strategies using CPF`,
+      
+      'pre-retirement': `The user is 5-10 years from retirement. Focus on:
+- Meeting CPF Retirement Sum requirements
+- CPF LIFE payout options and decisions
+- Voluntary top-ups to maximize retirement income
+- Healthcare cost planning (MediSave usage)
+- Transitioning from accumulation to withdrawal phase
+- Retirement adequacy assessment`,
+      
+      'retirement': `The user is at or past retirement age. Focus on:
+- CPF LIFE payouts and withdrawal options
+- Managing CPF savings in retirement
+- MediSave for healthcare expenses in retirement
+- Silver Support Scheme and other benefits
+- Bequest nominations and legacy planning
+- Supplementing CPF with other retirement income`,
+    };
+
+    const stageContext = stageContexts[stageId || 'general'] || '';
+
     // Create system prompt with context
     const systemPrompt = `You are a helpful CPF (Central Provident Fund) assistant for Singapore. Your role is to explain CPF policies, schemes, and regulations in simple, plain English.
 
-Life Stage Context: ${stageId || 'general'}
+${stageContext ? `LIFE STAGE CONTEXT:\n${stageContext}\n\n` : ''}
 
-${context ? `Reference Documents:\n${context}\n\n` : ''}
+${context ? `REFERENCE DOCUMENTS:\n${context}\n\n` : ''}
 
-Guidelines:
-- Explain CPF concepts in simple terms
-- Use the provided reference documents when available
-- If you don't know something, say so
-- Be friendly and encouraging
-- Focus on practical, actionable information`;
+GUIDELINES:
+- Tailor your responses to the user's specific life stage and priorities
+- Explain CPF concepts in simple terms, avoiding jargon
+- Use the provided reference documents when available for accurate information
+- Provide practical, actionable advice relevant to their situation
+- If you don't know something, say so honestly
+- Be friendly, encouraging, and empathetic
+- Use examples and scenarios when helpful
+- Highlight key deadlines, requirements, or considerations for their life stage`;
 
     // Call Lovable AI with context
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
