@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, BookOpen, Sparkles, Shield, Clock, Target } from "lucide-react";
+import { MessageSquare, BookOpen, Sparkles, Clock, Target } from "lucide-react";
 
 const Index = () => {
   return (
@@ -24,17 +24,11 @@ const Index = () => {
             <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
               Get personalized, plain-English answers to your CPF questions. Whether you're just starting work or planning your first home, we're here to help.
             </p>
-            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <div className="flex justify-center">
               <Link to="/stages">
                 <Button size="lg" className="gap-2 text-lg">
                   <MessageSquare className="h-5 w-5" />
                   Start Chatting
-                </Button>
-              </Link>
-              <Link to="/admin">
-                <Button size="lg" variant="outline" className="gap-2 text-lg">
-                  <Shield className="h-5 w-5" />
-                  Admin Portal
                 </Button>
               </Link>
             </div>
