@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Shield, User, Loader2, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Users, Shield, User, Loader2, ArrowLeft, CheckCircle, XCircle, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,6 +24,9 @@ const UserManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [processingUserId, setProcessingUserId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [isAddingAdmin, setIsAddingAdmin] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -104,6 +110,73 @@ const UserManagement = () => {
     }
   };
 
+  const addAdminByEmail = async () => {
+    if (!newAdminEmail.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAddingAdmin(true);
+    try {
+      // First, find the user by email using our custom function
+      const { data: userId, error: userError } = await supabase
+        .rpc('get_user_id_by_email', {
+          email_param: newAdminEmail.trim()
+        });
+
+      if (userError || !userId) {
+        toast({
+          title: "User Not Found",
+          description: "No user found with that email address. They must sign up first.",
+          variant: "destructive",
+        });
+        setIsAddingAdmin(false);
+        return;
+      }
+
+      // Add admin role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert([{
+          user_id: userId,
+          role: 'admin' as const,
+        }]);
+
+      if (roleError) {
+        if (roleError.code === '23505') {
+          toast({
+            title: "Already Admin",
+            description: "This user already has admin privileges.",
+          });
+        } else {
+          throw roleError;
+        }
+      } else {
+        toast({
+          title: "Admin Added",
+          description: `${newAdminEmail} has been granted admin access.`,
+        });
+      }
+
+      setNewAdminEmail("");
+      setIsDialogOpen(false);
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error adding admin:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add admin. Make sure the user exists.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingAdmin(false);
+    }
+  };
+
   const toggleAdminRole = async (userId: string, currentRoles: string[]) => {
     setProcessingUserId(userId);
     try {
@@ -181,13 +254,67 @@ const UserManagement = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              All Users
-            </CardTitle>
-            <CardDescription>
-              Total users: {users.length}
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  All Users
+                </CardTitle>
+                <CardDescription>
+                  Total users: {users.length}
+                </CardDescription>
+              </div>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Add Admin
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Admin User</DialogTitle>
+                    <DialogDescription>
+                      Enter the email address of an existing user to grant them admin privileges.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-email">Email Address</Label>
+                      <Input
+                        id="admin-email"
+                        type="email"
+                        placeholder="user@example.com"
+                        value={newAdminEmail}
+                        onChange={(e) => setNewAdminEmail(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !isAddingAdmin) {
+                            addAdminByEmail();
+                          }
+                        }}
+                      />
+                    </div>
+                    <Button
+                      onClick={addAdminByEmail}
+                      disabled={isAddingAdmin || !newAdminEmail.trim()}
+                      className="w-full"
+                    >
+                      {isAddingAdmin ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Adding Admin...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Grant Admin Access
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
