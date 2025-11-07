@@ -56,12 +56,6 @@ const Index = () => {
                 </div>
               </div>
             </div>
-
-            <div className="mt-4 text-center">
-              <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary">
-                Admin Portal
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -314,6 +308,33 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t bg-secondary/20 py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
+            <div className="text-sm text-muted-foreground">
+              © 2025 CPF Assistant. For informational purposes only.
+            </div>
+            <div className="flex gap-6">
+              <Link to="/methodology" className="text-sm text-muted-foreground hover:text-primary">
+                Methodology
+              </Link>
+              <a 
+                href="https://www.cpf.gov.sg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground hover:text-primary"
+              >
+                Official CPF Website
+              </a>
+              <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary">
+                Admin Portal
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
