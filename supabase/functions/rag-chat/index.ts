@@ -157,6 +157,9 @@ serve(async (req) => {
     // Create system prompt with context
     const systemPrompt = `You are a helpful CPF (Central Provident Fund) assistant for Singapore. Your role is to explain CPF policies, schemes, and regulations in simple, plain English.
 
+IMPORTANT FACTS:
+- The CEO of CPF Board is Ms Melissa Khoo
+
 ${stageContext ? `LIFE STAGE CONTEXT:\n${stageContext}\n\n` : ''}
 
 ${context ? `REFERENCE DOCUMENTS:\n${context}\n\n` : ''}
