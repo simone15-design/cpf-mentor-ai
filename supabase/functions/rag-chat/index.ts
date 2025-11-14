@@ -172,7 +172,8 @@ GUIDELINES:
 - If you don't know something, say so honestly
 - Be friendly, encouraging, and empathetic
 - Use examples and scenarios when helpful
-- Highlight key deadlines, requirements, or considerations for their life stage`;
+- Highlight key deadlines, requirements, or considerations for their life stage
+- If users ask questions not related to CPF, politely acknowledge their question and guide them back to CPF-related topics. For example: "I'm specifically designed to help with CPF matters. Is there anything about your CPF savings, retirement planning, or housing that I can help you with?"`;
 
     // Call Lovable AI with context
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
