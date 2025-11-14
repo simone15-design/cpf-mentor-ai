@@ -110,7 +110,7 @@ serve(async (req) => {
       });
     }
 
-    const { url, crawlType = 'member' } = await req.json();
+    const { url, crawlType = 'member', mode = 'scrape' } = await req.json();
     if (!url) {
       return new Response(JSON.stringify({ error: 'URL is required' }), {
         status: 400,
@@ -122,6 +122,16 @@ serve(async (req) => {
     if (crawlType !== 'member' && crawlType !== 'employer') {
       return new Response(JSON.stringify({ 
         error: 'Invalid crawlType. Must be either "member" or "employer"' 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate mode parameter
+    if (mode !== 'scrape' && mode !== 'crawl') {
+      return new Response(JSON.stringify({ 
+        error: 'Invalid mode. Must be either "scrape" or "crawl"' 
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -141,6 +151,7 @@ serve(async (req) => {
 
     console.log('URL validation passed for:', url);
     console.log('Crawl type:', crawlType);
+    console.log('Mode:', mode);
 
     // Select the appropriate API key based on crawl type
     const apiKeyEnvVar = crawlType === 'employer' 
@@ -153,6 +164,86 @@ serve(async (req) => {
         error: `Firecrawl API key not configured for ${crawlType} queries` 
       }), {
         status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Handle single page scraping (uses far fewer credits)
+    if (mode === 'scrape') {
+      console.log('Starting scrape for:', url);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      let scrapeResponse;
+      try {
+        scrapeResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${firecrawlApiKey}`,
+          },
+          body: JSON.stringify({
+            url: url,
+            formats: ['markdown', 'html'],
+          }),
+          signal: controller.signal,
+        });
+      } catch (error) {
+        clearTimeout(timeoutId);
+        console.error('Firecrawl API connection error:', error);
+        return new Response(JSON.stringify({ 
+          error: 'Failed to connect to Firecrawl API. The service may be temporarily unavailable. Please try again later.' 
+        }), {
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
+
+      if (!scrapeResponse.ok) {
+        const errorText = await scrapeResponse.text();
+        console.error('Firecrawl API error:', scrapeResponse.status, errorText);
+        return new Response(JSON.stringify({ 
+          error: `Firecrawl API error (${scrapeResponse.status}): ${errorText || 'Failed to scrape page'}` 
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const scrapeData = await scrapeResponse.json();
+      console.log('Scrape completed successfully');
+
+      // Save the scraped document
+      const { error: insertError } = await supabaseClient
+        .from('cpf_documents')
+        .insert({
+          title: scrapeData.data?.metadata?.title || 'Untitled Document',
+          url: url,
+          content: scrapeData.data?.html || '',
+          metadata: {
+            crawlType: crawlType,
+            sourceUrl: url,
+            scrapedAt: new Date().toISOString(),
+            pageMetadata: scrapeData.data?.metadata || {},
+          },
+        });
+
+      if (insertError) {
+        console.error('Database insert error:', insertError);
+        return new Response(JSON.stringify({ error: 'Failed to save document' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(JSON.stringify({ 
+        success: true,
+        message: 'Page scraped successfully',
+        pagesProcessed: 1
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }

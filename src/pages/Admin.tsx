@@ -28,6 +28,8 @@ const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [crawlUrl, setCrawlUrl] = useState("");
   const [isCrawling, setIsCrawling] = useState(false);
+  const [crawlMode, setCrawlMode] = useState<"scrape" | "crawl">("scrape");
+  const [crawlType, setCrawlType] = useState<"member" | "employer">("member");
 
   useEffect(() => {
     checkAuth();
@@ -220,20 +222,28 @@ const Admin = () => {
 
     setIsCrawling(true);
     try {
+      const actionText = crawlMode === 'scrape' ? 'Scraping' : 'Crawling';
       toast({
-        title: "Crawling Started",
-        description: "This may take a few minutes. Please wait...",
+        title: `${actionText} Started`,
+        description: crawlMode === 'scrape' 
+          ? "Fetching single page. This should be quick..."
+          : "Crawling multiple pages. This may take a few minutes...",
       });
 
       const { data, error } = await supabase.functions.invoke('crawl-website', {
-        body: { url: crawlUrl },
+        body: { 
+          url: crawlUrl,
+          mode: crawlMode,
+          crawlType: crawlType,
+        },
       });
 
       if (error) throw error;
 
+      const pagesCount = data.pagesProcessed || data.documentsCreated || 1;
       toast({
-        title: "Crawl Complete",
-        description: `Successfully crawled and saved ${data.documentsCreated} pages from the website.`,
+        title: `${actionText} Complete`,
+        description: `Successfully processed ${pagesCount} page${pagesCount > 1 ? 's' : ''} from the website.`,
       });
 
       setCrawlUrl("");
@@ -242,7 +252,7 @@ const Admin = () => {
       console.error('Crawl error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to crawl website';
       toast({
-        title: "Crawl Failed",
+        title: `${crawlMode === 'scrape' ? 'Scrape' : 'Crawl'} Failed`,
         description: errorMessage,
         variant: "destructive",
       });
@@ -371,6 +381,34 @@ const Admin = () => {
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="crawl-mode">Mode</Label>
+                  <select
+                    id="crawl-mode"
+                    value={crawlMode}
+                    onChange={(e) => setCrawlMode(e.target.value as "scrape" | "crawl")}
+                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="scrape">Scrape (Single Page - Low Credits)</option>
+                    <option value="crawl">Crawl (Multiple Pages - High Credits)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="crawl-type">Content Type</Label>
+                  <select
+                    id="crawl-type"
+                    value={crawlType}
+                    onChange={(e) => setCrawlType(e.target.value as "member" | "employer")}
+                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="member">Member Content</option>
+                    <option value="employer">Employer Content</option>
+                  </select>
+                </div>
+              </div>
+
               <Button 
                 onClick={handleCrawlWebsite} 
                 variant="secondary"
@@ -380,12 +418,12 @@ const Admin = () => {
                 {isCrawling ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Crawling Website...
+                    {crawlMode === 'scrape' ? 'Scraping Page...' : 'Crawling Website...'}
                   </>
                 ) : (
                   <>
                     <Globe className="mr-2 h-4 w-4" />
-                    Crawl Website
+                    {crawlMode === 'scrape' ? 'Scrape Page' : 'Crawl Website'}
                   </>
                 )}
               </Button>
