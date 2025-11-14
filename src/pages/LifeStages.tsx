@@ -1,64 +1,64 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Home, Heart, Baby, Users, TrendingUp, Clock } from "lucide-react";
+import { GraduationCap, Briefcase, Home, Heart, Baby, Users, TrendingUp, Clock, Building2 } from "lucide-react";
 
 const lifeStages = [
   {
     id: "fresh-graduate",
     title: "Fresh Graduate",
-    description: "Just started working? Learn about CPF contributions and savings.",
+    description: "Ages 22-25: Understanding your first CPF contributions and starting your savings journey.",
     icon: GraduationCap,
     color: "from-teal-500 to-teal-600",
   },
   {
     id: "early-career",
-    title: "Early Career",
-    description: "Building your career? Understand CPF for career growth and planning.",
+    title: "Early Career Professional",
+    description: "Ages 25-32: Building your career foundation and maximizing CPF savings for future goals.",
     icon: Briefcase,
     color: "from-blue-500 to-blue-600",
   },
   {
-    id: "married",
-    title: "Getting Married",
-    description: "Tying the knot? Discover joint CPF planning strategies.",
+    id: "family-planning",
+    title: "Family Planning",
+    description: "Ages 28-38: Getting married and buying your first home? Navigate CPF for major life milestones.",
     icon: Heart,
     color: "from-pink-500 to-pink-600",
   },
   {
-    id: "homebuyer",
-    title: "First-Time Homebuyer",
-    description: "Planning to buy a home? Learn about CPF housing schemes.",
-    icon: Home,
-    color: "from-orange-500 to-orange-600",
-  },
-  {
-    id: "parent",
-    title: "New Parent",
-    description: "Starting a family? Learn about healthcare and education planning.",
+    id: "growing-family",
+    title: "Growing Family",
+    description: "Ages 35-45: Raising children? Optimize CPF for education, healthcare, and upgrading your home.",
     icon: Baby,
     color: "from-purple-500 to-purple-600",
   },
   {
-    id: "mid-career",
-    title: "Mid-Career",
-    description: "Established in your career? Optimize your CPF for wealth building.",
-    icon: Users,
+    id: "mid-career-wealth",
+    title: "Mid-Career Wealth Building",
+    description: "Ages 40-55: Peak earning years - maximize CPF investments and grow your retirement fund.",
+    icon: TrendingUp,
     color: "from-indigo-500 to-indigo-600",
   },
   {
     id: "pre-retirement",
-    title: "Pre-Retirement",
-    description: "5-10 years from retirement? Maximize your CPF and plan ahead.",
-    icon: TrendingUp,
+    title: "Pre-Retirement Planning",
+    description: "Ages 55-65: Final stretch before retirement - top up CPF and secure your retirement income.",
+    icon: Clock,
     color: "from-emerald-500 to-emerald-600",
   },
   {
     id: "retirement",
-    title: "Retirement",
-    description: "Enjoying your golden years? Learn about CPF withdrawals and payouts.",
-    icon: Clock,
+    title: "Retiree",
+    description: "Age 65+: Managing CPF LIFE payouts, withdrawals, and enjoying your golden years.",
+    icon: Users,
     color: "from-violet-500 to-violet-600",
+  },
+  {
+    id: "employer",
+    title: "Employer",
+    description: "Business owner or HR professional? Understand employer CPF obligations and contributions.",
+    icon: Building2,
+    color: "from-amber-500 to-amber-600",
   },
 ];
 
