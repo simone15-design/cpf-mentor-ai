@@ -110,9 +110,19 @@ serve(async (req) => {
       });
     }
 
-    const { url } = await req.json();
+    const { url, crawlType = 'member' } = await req.json();
     if (!url) {
       return new Response(JSON.stringify({ error: 'URL is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate crawlType parameter
+    if (crawlType !== 'member' && crawlType !== 'employer') {
+      return new Response(JSON.stringify({ 
+        error: 'Invalid crawlType. Must be either "member" or "employer"' 
+      }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -130,10 +140,18 @@ serve(async (req) => {
     }
 
     console.log('URL validation passed for:', url);
+    console.log('Crawl type:', crawlType);
 
-    const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
+    // Select the appropriate API key based on crawl type
+    const apiKeyEnvVar = crawlType === 'employer' 
+      ? 'FIRECRAWL_API_KEY_EMPLOYER' 
+      : 'FIRECRAWL_API_KEY';
+    
+    const firecrawlApiKey = Deno.env.get(apiKeyEnvVar);
     if (!firecrawlApiKey) {
-      return new Response(JSON.stringify({ error: 'Firecrawl API key not configured' }), {
+      return new Response(JSON.stringify({ 
+        error: `Firecrawl API key not configured for ${crawlType} queries` 
+      }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -249,6 +267,7 @@ serve(async (req) => {
           uploaded_by: user.id,
           metadata: {
             crawlId: crawlData.id,
+            crawlType: crawlType,
             sourceUrl: url,
             crawledAt: new Date().toISOString(),
             pageMetadata: page.metadata || {},
