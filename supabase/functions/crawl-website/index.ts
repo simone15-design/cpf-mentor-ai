@@ -173,7 +173,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           url: url,
-          limit: 100,
+          limit: 10,
           scrapeOptions: {
             formats: ['markdown', 'html'],
           }
